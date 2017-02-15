@@ -3,27 +3,42 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace TheWorld.Models
 {
-    public class WorldContextSeedData
-    {
-        private WorldContext _context;
-        public WorldContextSeedData(WorldContext context)
-        {
-            _context = context;
-        }
+  public class WorldContextSeedData
+  {
+    private WorldContext _context;
+    private UserManager<WorldUser> _userManager;
 
-        public async Task EnsureSeedData()
+    public WorldContextSeedData(WorldContext context, UserManager<WorldUser> userManager)
+    {
+      _context = context;
+      _userManager = userManager;
+    }
+
+    public async Task EnsureSeedData()
+    {
+      if (await _userManager.FindByEmailAsync("boneill1292@gmail.com") == null)
+      {
+        var user = new WorldUser()
         {
-            if (!_context.Trips.Any())
-            {
-                var usTrip = new Trip()
-                {
-                    DateCreated = DateTime.Now,
-                    Name = "US Trip",
-                    UserName = "", //TODO Add Username
-                    Stops = new List<Stop>()
+          UserName = "boneill",
+          Email = "boneill1292@gmail.com"
+        };
+
+        await _userManager.CreateAsync(user, "#Cookie12");
+      }
+
+      if (!_context.Trips.Any())
+      {
+        var usTrip = new Trip()
+        {
+          DateCreated = DateTime.Now,
+          Name = "US Trip",
+          UserName = "boneill",
+          Stops = new List<Stop>()
                     {
             new Stop() {  Name = "Atlanta, GA", Arrival = new DateTime(2014, 6, 4), Latitude = 33.748995, Longitude = -84.387982, Order = 0 },
             new Stop() {  Name = "New York, NY", Arrival = new DateTime(2014, 6, 9), Latitude = 40.712784, Longitude = -74.005941, Order = 1 },
@@ -33,18 +48,18 @@ namespace TheWorld.Models
             new Stop() {  Name = "Atlanta, GA", Arrival = new DateTime(2014, 8, 23), Latitude = 33.748995, Longitude = -84.387982, Order = 5 },
 
                     }
-                };
+        };
 
-                _context.Trips.Add(usTrip);
+        _context.Trips.Add(usTrip);
 
-                _context.Stops.AddRange(usTrip.Stops);
+        _context.Stops.AddRange(usTrip.Stops);
 
-                var worldTrip = new Trip()
-                {
-                    DateCreated = DateTime.UtcNow,
-                    Name = "WorldTrip",
-                    UserName = "", //add
-                    Stops = new List<Stop>()
+        var worldTrip = new Trip()
+        {
+          DateCreated = DateTime.UtcNow,
+          Name = "WorldTrip",
+          UserName = "", //add
+          Stops = new List<Stop>()
                     {
             new Stop() { Order = 0, Latitude =  33.748995, Longitude =  -84.387982, Name = "Atlanta, Georgia", Arrival = DateTime.Parse("Jun 3, 2014") },
             new Stop() { Order = 1, Latitude =  48.856614, Longitude =  2.352222, Name = "Paris, France", Arrival = DateTime.Parse("Jun 4, 2014") },
@@ -104,19 +119,19 @@ namespace TheWorld.Models
             new Stop() { Order = 55, Latitude =  33.748995, Longitude =  -84.387982, Name = "Atlanta, Georgia", Arrival = DateTime.Parse("Jun 17, 2015") },
 
                     }
-                };
+        };
 
-                _context.Trips.Add(worldTrip);
+        _context.Trips.Add(worldTrip);
 
-                _context.Stops.AddRange(worldTrip.Stops);
+        _context.Stops.AddRange(worldTrip.Stops);
 
-                //seeding the database 3:53
+        //seeding the database 3:53
 
-                await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
 
 
-            }
-        }
-    } 
+      }
+    }
+  }
 }
