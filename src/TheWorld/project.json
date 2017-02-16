@@ -56,10 +56,16 @@
     "gcServer": true
   },
 
+  //"runtimes": {
+  //  "win81-x64": { }
+  //},
+
   "publishOptions": {
     "include": [
       "wwwroot",
-      "web.config"
+      "web.config",
+      "Views",
+      "config.json"
     ]
   },
 

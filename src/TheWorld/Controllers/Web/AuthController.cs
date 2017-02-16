@@ -10,7 +10,6 @@ using TheWorld.ViewModels;
 
 namespace TheWorld.Controllers.Web
 {
-
   public class AuthController : Controller
   {
     private SignInManager<WorldUser> _signInManager;
@@ -20,43 +19,46 @@ namespace TheWorld.Controllers.Web
       _signInManager = signInManager;
     }
 
-
-    public IActionResult Login()
+    public ActionResult Login()
     {
       if (User.Identity.IsAuthenticated)
       {
         return RedirectToAction("Trips", "App");
       }
-
       return View();
     }
 
     [HttpPost]
-    public ActionResult Login(LoginViewModel vm)
+    public async Task<ActionResult> Login(LoginViewModel model)
     {
       if (ModelState.IsValid)
       {
         //Asp.net Identity 53m 26s - Implement Login and Logout. 3:15 mins
-        var signInResult =  _signInManager.PasswordSignInAsync(vm.Username, vm.Password, true, false);
+        var signinResult = await _signInManager.PasswordSignInAsync
+          (model.Username,
+          model.Password,
+          false, false);
 
-        if (signInResult.IsCompleted)
+        if (signinResult.Succeeded)
         {
-          return RedirectToAction("Trips","App");
+          return RedirectToAction("Trips", "App");
         }
-        else
-        {
-          ModelState.AddModelError("", "UserName or Password Incorrect");
-        }
-
       }
+
+      // Just say Login failed on all errors
+      ModelState.AddModelError("", "Login Failed");
 
       return View();
     }
 
-
-
-
-
+    public async Task<ActionResult> Logout()
+    {
+      if (User.Identity.IsAuthenticated)
+      {
+        await _signInManager.SignOutAsync();
+      }
+      return RedirectToAction("Index", "App");
+    }
 
   }
 }

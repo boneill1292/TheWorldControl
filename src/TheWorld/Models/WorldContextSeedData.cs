@@ -12,7 +12,7 @@ namespace TheWorld.Models
     private WorldContext _context;
     private UserManager<WorldUser> _userManager;
 
-    public WorldContextSeedData(WorldContext context, UserManager<WorldUser> userManager)
+    public WorldContextSeedData(WorldContext context, UserManager<WorldUser> userManager )
     {
       _context = context;
       _userManager = userManager;
@@ -30,24 +30,22 @@ namespace TheWorld.Models
 
         await _userManager.CreateAsync(user, "#Cookie12");
       }
-
       if (!_context.Trips.Any())
       {
         var usTrip = new Trip()
         {
-          DateCreated = DateTime.Now,
+          DateCreated = DateTime.UtcNow,
           Name = "US Trip",
-          UserName = "boneill",
+          UserName = "boneill", // TODO Add UserName
           Stops = new List<Stop>()
-                    {
+          {
             new Stop() {  Name = "Atlanta, GA", Arrival = new DateTime(2014, 6, 4), Latitude = 33.748995, Longitude = -84.387982, Order = 0 },
             new Stop() {  Name = "New York, NY", Arrival = new DateTime(2014, 6, 9), Latitude = 40.712784, Longitude = -74.005941, Order = 1 },
             new Stop() {  Name = "Boston, MA", Arrival = new DateTime(2014, 7, 1), Latitude = 42.360082, Longitude = -71.058880, Order = 2 },
             new Stop() {  Name = "Chicago, IL", Arrival = new DateTime(2014, 7, 10), Latitude = 41.878114, Longitude = -87.629798, Order = 3 },
             new Stop() {  Name = "Seattle, WA", Arrival = new DateTime(2014, 8, 13), Latitude = 47.606209, Longitude = -122.332071, Order = 4 },
             new Stop() {  Name = "Atlanta, GA", Arrival = new DateTime(2014, 8, 23), Latitude = 33.748995, Longitude = -84.387982, Order = 5 },
-
-                    }
+          }
         };
 
         _context.Trips.Add(usTrip);
@@ -58,9 +56,9 @@ namespace TheWorld.Models
         {
           DateCreated = DateTime.UtcNow,
           Name = "WorldTrip",
-          UserName = "", //add
+          UserName = "", // TODO Add UserName
           Stops = new List<Stop>()
-                    {
+          {
             new Stop() { Order = 0, Latitude =  33.748995, Longitude =  -84.387982, Name = "Atlanta, Georgia", Arrival = DateTime.Parse("Jun 3, 2014") },
             new Stop() { Order = 1, Latitude =  48.856614, Longitude =  2.352222, Name = "Paris, France", Arrival = DateTime.Parse("Jun 4, 2014") },
             new Stop() { Order = 2, Latitude =  50.850000, Longitude =  4.350000, Name = "Brussels, Belgium", Arrival = DateTime.Parse("Jun 25, 2014") },
@@ -117,8 +115,7 @@ namespace TheWorld.Models
             new Stop() { Order = 53, Latitude =  3.139003, Longitude =  101.686855, Name = "Kuala Lumpor, Malaysia", Arrival = DateTime.Parse("May 7, 2015") },
             new Stop() { Order = 54, Latitude =  13.727896, Longitude =  100.524123, Name = "Bangkok, Thailand", Arrival = DateTime.Parse("May 24, 2015") },
             new Stop() { Order = 55, Latitude =  33.748995, Longitude =  -84.387982, Name = "Atlanta, Georgia", Arrival = DateTime.Parse("Jun 17, 2015") },
-
-                    }
+          }
         };
 
         _context.Trips.Add(worldTrip);
@@ -126,10 +123,7 @@ namespace TheWorld.Models
         _context.Stops.AddRange(worldTrip.Stops);
 
         //seeding the database 3:53
-
         await _context.SaveChangesAsync();
-
-
 
       }
     }
