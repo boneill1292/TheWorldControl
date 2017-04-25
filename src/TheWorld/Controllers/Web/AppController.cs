@@ -34,7 +34,7 @@ namespace TheWorld.Controllers.Web
     {
       try
       {
-        return View();
+        return View("Index");
       }
       catch (Exception ex)
       {
@@ -43,13 +43,14 @@ namespace TheWorld.Controllers.Web
       }
     }
 
+
     [Authorize]
     public IActionResult Trips()
     {
       try
       {
         var data = _repository.GetAllTrips();
-        return View(data);
+        return View("Trips",data);
       }
       catch (Exception ex)
       {

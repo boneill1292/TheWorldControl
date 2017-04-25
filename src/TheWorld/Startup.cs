@@ -13,6 +13,7 @@ using TheWorld.Models;
 using Newtonsoft.Json.Serialization;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using TheWorld.ViewModels;
 
 namespace TheWorld
@@ -64,7 +65,13 @@ namespace TheWorld
         config.Cookies.ApplicationCookie.LoginPath = "/Auth/Login";
       }).AddEntityFrameworkStores<WorldContext>();
 
-      services.AddMvc().AddJsonOptions(config =>
+      services.AddMvc(config =>
+      {
+        if (_env.IsProduction())
+        {
+          config.Filters.Add(new RequireHttpsAttribute());
+        }
+      }).AddJsonOptions(config =>
       config.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver());
     }
 
