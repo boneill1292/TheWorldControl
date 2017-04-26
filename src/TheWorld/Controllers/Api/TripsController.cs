@@ -1,21 +1,24 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using TheWorld.Models;
 using TheWorld.ViewModels;
 
 namespace TheWorld.Controllers.Api
 {
   [Route("api/trips")]
+  [Authorize]
   public class TripsController : Controller
   {
-    private IWorldRepository _repository;
     private ILogger<TripsController> _logger;
+    private IWorldRepository _repository;
+
     public TripsController(IWorldRepository repository, ILogger<TripsController> logger)
     {
       _repository = repository;
@@ -27,15 +30,15 @@ namespace TheWorld.Controllers.Api
     {
       try
       {
-        var results = _repository.GetTripsByUsername(this.User.Identity.Name);
+        var results = _repository.GetTripsByUsername(User.Identity.Name);
+
         return Ok(Mapper.Map<IEnumerable<TripViewModel>>(results));
       }
       catch (Exception ex)
       {
+        _logger.LogError($"Failed to get All Trips: {ex}");
 
-        _logger.LogError("Failed to get All Trips", ex.Message);
-
-        return BadRequest("Error Occured " + ex.Message);
+        return BadRequest("Error occurred");
       }
     }
 
@@ -44,23 +47,20 @@ namespace TheWorld.Controllers.Api
     {
       if (ModelState.IsValid)
       {
-        //Save to the database.
+        // Save to the Database
         var newTrip = Mapper.Map<Trip>(theTrip);
 
         newTrip.UserName = User.Identity.Name;
+
+        _repository.AddTrip(newTrip);
 
         if (await _repository.SaveChangesAsync())
         {
           return Created($"api/trips/{theTrip.Name}", Mapper.Map<TripViewModel>(newTrip));
         }
-        else
-        {
-          return BadRequest("Failed to save changes to the database");
-        }
-
       }
 
-      return BadRequest("Bad Data");
+      return BadRequest("Failed to save the trip");
     }
   }
 }
