@@ -21,7 +21,7 @@ namespace TheWorld.Models
 
     public void AddStop(string tripName, Stop newStop, string username)
     {
-      var trip = GetUserTripByName(tripName,username);
+      var trip = GetUserTripByName(tripName, username);
 
       if (trip != null)
       {
@@ -45,7 +45,7 @@ namespace TheWorld.Models
     public Trip GetTripByName(string tripName)
     {
       return _context.Trips.Include(t => t.Stops)
-          .Where(t => t.Name == tripName).FirstOrDefault();
+        .Where(t => t.Name == tripName).FirstOrDefault();
     }
 
     public async Task<bool> SaveChangesAsync()
